@@ -1319,7 +1319,7 @@ export default function ChatPanel({
                                         ? "/favicon-white.svg"
                                         : "/favicon.ico"
                                 }
-                                alt="Next AI Drawio"
+                                alt="绘图plus"
                                 width={isMobile ? 24 : 28}
                                 height={isMobile ? 24 : 28}
                                 className="rounded flex-shrink-0"
@@ -1327,7 +1327,7 @@ export default function ChatPanel({
                             <h1
                                 className={`${isMobile ? "text-sm" : "text-base"} font-semibold tracking-tight whitespace-nowrap`}
                             >
-                                Next AI Drawio
+                                绘图plus
                             </h1>
                         </div>
                     </button>

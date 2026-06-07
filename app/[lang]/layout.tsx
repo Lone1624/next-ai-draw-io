@@ -47,10 +47,10 @@ export async function generateMetadata({
 
     // Default to English metadata
     const titles: Record<Locale, string> = {
-        en: "Next AI Draw.io - AI-Powered Diagram Generator",
-        zh: "Next AI Draw.io - AI powered diagram generator",
-        ja: "Next AI Draw.io - AI-powered diagram generator",
-        "zh-Hant": "Next AI Draw.io - AI 驅動的圖表產生器",
+        en: "绘图plus - AI-Powered Diagram Generator",
+        zh: "绘图plus - AI 驱动的图表生成器",
+        ja: "绘图plus - AI-powered diagram generator",
+        "zh-Hant": "绘图plus - AI 驅動的圖表產生器",
     }
 
     const descriptions: Record<Locale, string> = {
@@ -75,16 +75,16 @@ export async function generateMetadata({
             "free diagram generator",
             "online diagram maker",
         ],
-        authors: [{ name: "Next AI Draw.io" }],
-        creator: "Next AI Draw.io",
-        publisher: "Next AI Draw.io",
+        authors: [{ name: "绘图plus" }],
+        creator: "绘图plus",
+        publisher: "绘图plus",
         metadataBase: new URL("https://next-ai-drawio.jiang.jp"),
         openGraph: {
             title: titles[lang],
             description: descriptions[lang],
             type: "website",
             url: "https://next-ai-drawio.jiang.jp",
-            siteName: "Next AI Draw.io",
+            siteName: "绘图plus",
             locale:
                 lang === "zh"
                     ? "zh_CN"
@@ -98,7 +98,7 @@ export async function generateMetadata({
                     url: "/architecture.png",
                     width: 1200,
                     height: 630,
-                    alt: "Next AI Draw.io - AI-powered diagram creation tool",
+                    alt: "绘图plus - AI-powered diagram creation tool",
                 },
             ],
         },
