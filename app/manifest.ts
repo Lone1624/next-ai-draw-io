@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next"
 import { getAssetUrl } from "@/lib/base-path"
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: "绘图plus",
-        short_name: "绘图plus",
+        name: "自动工具",
+        short_name: "自动工具",
         description:
             "Create AWS architecture diagrams, flowcharts, and technical diagrams using AI. Free online tool integrating draw.io with AI assistance for professional diagram creation.",
         start_url: getAssetUrl("/"),

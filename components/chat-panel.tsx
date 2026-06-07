@@ -1319,7 +1319,7 @@ export default function ChatPanel({
                                         ? "/favicon-white.svg"
                                         : "/favicon.ico"
                                 }
-                                alt="绘图plus"
+                                alt="自动工具"
                                 width={isMobile ? 24 : 28}
                                 height={isMobile ? 24 : 28}
                                 className="rounded flex-shrink-0"
@@ -1327,7 +1327,7 @@ export default function ChatPanel({
                             <h1
                                 className={`${isMobile ? "text-sm" : "text-base"} font-semibold tracking-tight whitespace-nowrap`}
                             >
-                                绘图plus
+                                自动工具
                             </h1>
                         </div>
                     </button>
