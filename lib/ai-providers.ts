@@ -32,6 +32,7 @@ export const SINGLE_SYSTEM_PROVIDERS = new Set<ProviderName>([
     "kimi",
     "qiniu",
     "novita",
+    "mimo",
 ])
 
 /**
@@ -116,6 +117,8 @@ const ALLOWED_CLIENT_PROVIDERS: ProviderName[] = [
     "kimi",
     "minimax",
     "novita",
+    "mimo",
+    "atlascloud",
 ]
 
 // Bedrock provider options for Anthropic beta features
@@ -540,7 +543,9 @@ function buildProviderOptions(
         case "qwen":
         case "kimi":
         case "qiniu":
-        case "novita": {
+        case "novita":
+        case "atlascloud":
+        case "mimo": {
             // These providers don't have reasoning configs in AI SDK yet
             // Gateway passes through to underlying providers which handle their own configs
             break
@@ -577,6 +582,8 @@ export const PROVIDER_ENV_VARS: Record<ProviderName, string | null> = {
     kimi: "KIMI_API_KEY",
     minimax: "MINIMAX_API_KEY",
     novita: "NOVITA_API_KEY",
+    mimo: "MIMO_API_KEY",
+    atlascloud: "ATLASCLOUD_API_KEY",
 }
 
 /**
@@ -1346,10 +1353,28 @@ export function getAIModel(overrides?: ClientOverrides): ModelConfig {
             break
         }
 
+        case "mimo": {
+            const apiKey = resolveApiKey(overrides, "MIMO_API_KEY")
+            const baseURL = resolveBaseURL(
+                overrides?.apiKey,
+                overrides?.baseUrl,
+                resolveBaseUrlEnv(overrides, "MIMO_BASE_URL"),
+                PROVIDER_INFO.mimo?.defaultBaseUrl,
+            )
+            // Use createDeepSeek to properly handle reasoning_content for MiMo
+            // thinking models (e.g., mimo-v2.5-pro). MiMo's API requires
+            // reasoning_content to be passed back during multi-turn tool calls
+            // (returns 400 otherwise), same convention as DeepSeek and Kimi.
+            const mimoProvider = createDeepSeek({ apiKey, baseURL })
+            model = mimoProvider(modelId)
+            break
+        }
+
         case "glm":
         case "qwen":
         case "qiniu":
-        case "novita": {
+        case "novita":
+        case "atlascloud": {
             const envVar = PROVIDER_ENV_VARS[provider]
             if (!envVar) {
                 throw new Error(
@@ -1393,7 +1418,7 @@ export function getAIModel(overrides?: ClientOverrides): ModelConfig {
 
         default:
             throw new Error(
-                `Unknown AI provider: ${provider}. Supported providers: bedrock, openai, anthropic, google, azure, ollama, openrouter, aihubmix, deepseek, siliconflow, sglang, gateway, edgeone, doubao, modelscope, glm, qwen, qiniu, kimi, minimax, novita`,
+                `Unknown AI provider: ${provider}. Supported providers: bedrock, openai, anthropic, google, azure, ollama, openrouter, aihubmix, deepseek, siliconflow, sglang, gateway, edgeone, doubao, modelscope, glm, qwen, qiniu, kimi, minimax, novita, mimo, atlascloud`,
             )
     }
 
@@ -1420,76 +1445,13 @@ export function supportsPromptCaching(modelId: string): boolean {
 }
 
 /**
- * Check if a model supports image/vision input.
- * Some models silently drop image parts without error (AI SDK warning only).
- */
-export function supportsImageInput(modelId: string): boolean {
-    const lowerModelId = modelId.toLowerCase()
-
-    // Helper to check if model has vision capability indicator
-    const hasVisionIndicator =
-        lowerModelId.includes("vision") || lowerModelId.includes("vl")
-
-    // Models that DON'T support image/vision input (unless vision variant)
-    // Kimi K2 doesn't support images, but K2.5 does
-    // Only block kimi-k2 specifically, not other Kimi models
-    if (
-        (lowerModelId.includes("kimi-k2") ||
-            lowerModelId.includes("kimi_k2")) &&
-        !hasVisionIndicator &&
-        !lowerModelId.includes("2.5") &&
-        !lowerModelId.includes("k2.5")
-    ) {
-        return false
-    }
-
-    // Moonshot text models (moonshot-v1 series are text-only)
-    if (lowerModelId.includes("moonshot-v1") && !hasVisionIndicator) {
-        return false
-    }
-
-    // MiniMax text models (MiniMax-M2.x series are text-only; M3 supports image input)
-    if (
-        lowerModelId.includes("minimax") &&
-        !hasVisionIndicator &&
-        !lowerModelId.includes("m3")
-    ) {
-        return false
-    }
-
-    // DeepSeek text models (not vision variants)
-    if (lowerModelId.includes("deepseek") && !hasVisionIndicator) {
-        return false
-    }
-
-    // Qwen text models (not vision variants like qwen-vl)
-    // Qwen3.5 series (qwen3.5, qwen3.5-plus, qwen3.5-flash) natively support image input
-    // QvQ (Qwen Visual QA) models are vision models — exclude them even when prefixed with "qwen/"
-    if (
-        lowerModelId.includes("qwen") &&
-        !hasVisionIndicator &&
-        !lowerModelId.includes("qwen3.5") &&
-        !lowerModelId.includes("qvq")
-    ) {
-        return false
-    }
-
-    // GLM text models (not vision variants)
-    // GLM vision models: glm-4v, glm-4v-9b, glm-4.1v-9b-thinking
-    if (lowerModelId.includes("glm") && !hasVisionIndicator) {
-        if (!/[\d.]v/.test(lowerModelId)) {
-            return false
-        }
-    }
-
-    // Default: assume model supports images
-    return true
-}
-
-/**
  * Get the AI model for diagram validation.
  * Uses VALIDATION_MODEL env var if set, otherwise falls back to AI_MODEL.
- * Throws if the model doesn't support image input.
+ *
+ * Note: we no longer guess whether the model supports image input from its
+ * name — that heuristic misfired on newer models (see issue #874). If a
+ * configured validation model can't handle images, the API call simply errors
+ * and the validate-diagram route falls back to "valid".
  */
 export function getValidationModel(): ReturnType<typeof getAIModel>["model"] {
     // AI_MODEL may be comma-separated (multi-model fallback); pick the first.
@@ -1499,12 +1461,6 @@ export function getValidationModel(): ReturnType<typeof getAIModel>["model"] {
     if (!modelId) {
         throw new Error(
             "No validation model configured. Set VALIDATION_MODEL or AI_MODEL.",
-        )
-    }
-
-    if (!supportsImageInput(modelId)) {
-        throw new Error(
-            `Validation requires a vision-capable model. Model "${modelId}" does not support image input.`,
         )
     }
 

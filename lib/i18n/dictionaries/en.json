@@ -34,7 +34,8 @@
         "glm": "GLM",
         "qwen": "Qwen",
         "kimi": "Kimi",
-        "qiniu": "Qiniu"
+        "qiniu": "Qiniu",
+        "mimo": "MiMo (Xiaomi)"
     },
     "chat": {
         "placeholder": "Describe your diagram or upload a file...",
@@ -131,6 +132,8 @@
         "customSystemMessage": "Custom System Message",
         "customSystemMessageDescription": "Add custom instructions appended to the AI's system prompt.",
         "customSystemMessagePlaceholder": "e.g., Always use blue color scheme for diagrams...",
+        "maxOutputTokens": "Max Output Tokens",
+        "maxOutputTokensDescription": "Budget for one reply, shared by thinking and the diagram XML. Raise it if the AI keeps thinking and no diagram appears. Leave empty for the default.",
         "panelVisibility": "Lobby Panels",
         "panelVisibilityDescription": "Choose which panels to show on the chat lobby.",
         "showRecentChats": "Recent Chats",
@@ -371,6 +374,7 @@
         "baseUrlWithExample": "Base URL (optional, e.g. {example})",
         "customEndpoint": "Custom endpoint URL",
         "minimaxBaseUrlHint": "Use /anthropic for Anthropic-compatible API (recommended), or /v1 for OpenAI-compatible API",
+        "mimoBaseUrlHint": "Default works with pay-as-you-go keys (sk-...). Token Plan subscribers (tp-... keys) must set https://token-plan-cn.xiaomimimo.com/v1",
         "models": "Models",
         "customModelId": "Custom model ID...",
         "allAdded": "All added",

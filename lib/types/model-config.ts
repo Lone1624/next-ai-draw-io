@@ -23,6 +23,8 @@ export type ProviderName =
     | "kimi"
     | "minimax"
     | "novita"
+    | "mimo"
+    | "atlascloud"
 
 // Individual model configuration
 export interface ModelConfig {
@@ -114,6 +116,8 @@ export const PROVIDER_LOGO_MAP: Record<string, string> = {
     modelscope: "modelscope",
     minimax: "minimax",
     novita: "novita",
+    mimo: "xiaomi",
+    atlascloud: "openai",
 }
 
 // Provider metadata
@@ -199,6 +203,14 @@ export const PROVIDER_INFO: Record<
     novita: {
         label: "Novita AI",
         defaultBaseUrl: "https://api.novita.ai/openai",
+    },
+    mimo: {
+        label: "MiMo (Xiaomi)",
+        defaultBaseUrl: "https://api.xiaomimimo.com/v1",
+    },
+    atlascloud: {
+        label: "Atlas Cloud",
+        defaultBaseUrl: "https://api.atlascloud.ai/v1",
     },
 }
 
@@ -437,6 +449,8 @@ export const SUGGESTED_MODELS: Partial<Record<ProviderName, string[]>> = {
         "moonshotai/kimi-k2.6",
         "deepseek/deepseek-v4-flash",
     ],
+    mimo: ["mimo-v2.5-pro", "mimo-v2.5"],
+    atlascloud: ["qwen/qwen3.5-flash", "deepseek-ai/deepseek-v4-pro"],
 }
 
 // Helper to generate UUID

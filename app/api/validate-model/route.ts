@@ -56,7 +56,7 @@ export async function POST(req: Request) {
         }
 
         // SECURITY: Block SSRF attacks via custom baseUrl
-        if (baseUrl && !allowPrivateUrls() && isPrivateUrl(baseUrl)) {
+        if (baseUrl && !allowPrivateUrls() && (await isPrivateUrl(baseUrl))) {
             return NextResponse.json(
                 { valid: false, error: "Invalid base URL" },
                 { status: 400 },
@@ -372,12 +372,14 @@ export async function POST(req: Request) {
                 break
             }
 
-            // GLM, Qwen, Kimi, Qiniu, Novita - OpenAI compatible
+            // GLM, Qwen, Kimi, Qiniu, Novita, MiMo, Atlas Cloud - OpenAI compatible
             case "glm":
             case "qwen":
             case "kimi":
             case "qiniu":
-            case "novita": {
+            case "novita":
+            case "atlascloud":
+            case "mimo": {
                 const baseURL =
                     baseUrl ||
                     PROVIDER_INFO[provider as ProviderName]?.defaultBaseUrl ||

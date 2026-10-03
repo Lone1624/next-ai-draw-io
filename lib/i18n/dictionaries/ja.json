@@ -34,7 +34,8 @@
         "glm": "GLM",
         "qwen": "Qwen",
         "kimi": "Kimi",
-        "qiniu": "Qiniu"
+        "qiniu": "Qiniu",
+        "mimo": "MiMo (Xiaomi)"
     },
     "chat": {
         "placeholder": "ダイアグラムを説明するか、ファイルをアップロード...",
@@ -131,6 +132,8 @@
         "customSystemMessage": "カスタムシステムメッセージ",
         "customSystemMessageDescription": "AIのシステムプロンプトに追加されるカスタム指示を入力します。",
         "customSystemMessagePlaceholder": "例：ダイアグラムには常に青色のカラースキームを使用...",
+        "maxOutputTokens": "最大出力トークン数",
+        "maxOutputTokensDescription": "1回の応答の予算で、思考過程とダイアグラムの XML が共有します。AI が考え続けてダイアグラムが生成されない場合は大きくしてください。空欄ならデフォルト値を使います。",
         "panelVisibility": "ロビーパネル",
         "panelVisibilityDescription": "チャットロビーに表示するパネルを選択します。",
         "showRecentChats": "最近のチャット",
@@ -325,6 +328,7 @@
         "baseUrlWithExample": "ベース URL（オプション、例: {example}）",
         "customEndpoint": "カスタムエンドポイント URL",
         "minimaxBaseUrlHint": "/anthropic で Anthropic 互換 API（推奨）、または /v1 で OpenAI 互換 API を使用",
+        "mimoBaseUrlHint": "デフォルトは従量課金キー（sk-...）用です。Token Plan 加入者（tp-... キー）は https://token-plan-cn.xiaomimimo.com/v1 を設定してください",
         "models": "モデル",
         "customModelId": "カスタムモデル ID...",
         "allAdded": "すべて追加済み",
